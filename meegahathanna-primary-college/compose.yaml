@@ -1,0 +1,34 @@
+services:
+  school:
+    build: .
+    init: true
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:3001:3001'
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3001
+      APP_ORIGIN: ${APP_ORIGIN:?Set APP_ORIGIN to your HTTPS school domain}
+      DATABASE_PATH: /app/data/school.db
+      UPLOAD_PATH: /app/data/uploads
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+    volumes:
+      - school-data:/app/data
+      - school-backups:/app/backups
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3001/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  school-data:
+  school-backups:
