@@ -1,9 +1,0 @@
-node_modules
-dist
-.env
-.git
-data
-backups
-data-before-restore-*
-test-results
-upload
